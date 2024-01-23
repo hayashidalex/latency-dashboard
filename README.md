@@ -3,7 +3,14 @@
 ## Usage
 
 ```
+# First time only
+python3 -m venv venv
+
+
 source venv/bin/activate
+
+# If necesssary
+pip install -r requirements.txt
 
 python app.py
 ```
