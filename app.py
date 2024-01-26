@@ -1,5 +1,10 @@
 import pandas as pd
 import plotly.graph_objects as go # or plotly.express as px
+import dash_bootstrap_components as dbc
+from dash import Dash, dcc, html
+
+# Still hard-coded 
+# Will receive this from the slice (somehow)
 
 node_names = ['node0', 'node1', 'node2', 'node3', 'node4', 'node5', 'node6', 'node7', 'node8', 'node9', 'node10', 'node11', 'node12', 'node13']
 
@@ -27,27 +32,111 @@ fig.add_trace(go.Scattergeo(
         marker=dict(size=8, color="blue")
         ))
 
-fig.add_trace(
-    go.Scattergeo(
-        lon = sites_df['lon'],
-        lat = sites_df['lat'],
-        mode = 'lines',
-        line = dict(width = 2,color = 'red'),
-        #hovertext=['1-2'],
-        #textposition='top center',
+#fig.add_trace(
+#    go.Scattergeo(
+#        lon = sites_df['lon'],
+#        lat = sites_df['lat'],
+#        mode = 'lines',
+#        line = dict(width = 2,color = 'red'),
+#        #hovertext=['1-2'],
+#        #textposition='top center',
+#    )
+#)
+
+fig.update_geos(
+    #center=dict(lon=0, lat=-80),
+    lataxis_range=[-30,80],
+    lonaxis_range=[-250,50]
     )
-)
 
 fig.update_layout(
         title = 'Sites',
-        geo_scope='world',
+        #geo_scope='world',
     )
 
-from dash import Dash, dcc, html
+# Callback + line graph
+#TODO
 
-app = Dash()
-app.layout = html.Div([
-    dcc.Graph(figure=fig, style={'width': '90vw', 'height': '90vh'})
-])
 
-app.run_server(debug=True, use_reloader=False)  # Turn off reloader if inside Jupyter
+
+
+# Layout
+
+app = Dash(external_stylesheets=[dbc.themes.BOOTSTRAP])
+
+controls = dbc.Card(
+    [
+        html.Div(
+            [
+                dbc.Label("Source Node"),
+                dbc.Select(
+                    id="src-node",
+                    options=[
+                        {"label": i, "value": i} for i in sites_df['site'].tolist()
+                    ],
+                    value="10.0.0.1",
+                ),
+            ],
+            style={'marginBottom': 2, 
+                    'marginTop': 20, 
+                    'marginLeft': 5, 
+                    'marginRight':5},
+        ),
+        html.Div(
+            [
+                dbc.Label("Destination Node"),
+                dbc.Select(
+                    id="dst-node",
+                    options=[
+                        {"label": i, "value": i} for i in sites_df['site'].tolist() 
+                    ],
+                    value="10.0.1.1",
+                ),
+            ],
+            style={'marginBottom': 2, 
+                    'marginTop': 20, 
+                    'marginLeft': 5, 
+                    'marginRight':5}
+        ),
+        html.Div(
+            [
+                dbc.Label("Duration in Minutes"),
+                dbc.Input(id="min", type="number", value=10),
+            ],
+            style={'marginBottom': 2, 
+                    'marginTop': 20, 
+                    'marginLeft': 5, 
+                    'marginRight':5}
+        ),
+        html.Div(
+            [
+                dbc.Button("Submit", outline=True, color="primary"),
+            ], 
+            style={'marginBottom': 25, 
+                    'marginTop': 20, 
+                    'marginLeft': 10}
+        ),
+
+    ],
+)
+
+
+app.layout = dbc.Container(
+    [
+        html.H2("FABRIC Latency Monitor"),
+        html.Hr(),
+        dbc.Row(
+            [
+                dbc.Col(dcc.Graph(figure=fig), lg=8),
+                dbc.Col(controls, lg=4),
+            ],
+            align="center",
+        ),
+    ],
+    fluid=True,
+)
+
+
+if __name__ == "__main__":
+    app.run_server(debug=True, use_reloader=False)  
+    # Turn off reloader if inside Jupyter
