@@ -9,7 +9,7 @@ Requirements
 -----------
 sites.csv: site, lon, lat (for all sites)
 slice.csv: site, ip_address, node_name
-sample.csv: (downloaded from InfluxDB) latency, received, receiver, sender, seq_n, DateTime
+data.csv: (downloaded from InfluxDB) latency, received, receiver, sender, seq_n, DateTime
 
 '''
 
@@ -24,7 +24,7 @@ sites_df = sites_df.merge(locs_df)
 
 
 # Create another Dataframe of latency cada
-latency_df = pd.read_csv("sample.csv", header=0, comment="#")
+latency_df = pd.read_csv("data.csv", header=0, comment="#")
 
 # For some reason there is an unwanted column, so delete that
 latency_df.drop('Unnamed: 0', axis=1, inplace=True)
