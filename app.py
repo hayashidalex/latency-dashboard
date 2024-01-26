@@ -1,3 +1,4 @@
+import pandas as pd
 import plotly.graph_objects as go # or plotly.express as px
 
 node_names = ['node0', 'node1', 'node2', 'node3', 'node4', 'node5', 'node6', 'node7', 'node8', 'node9', 'node10', 'node11', 'node12', 'node13']
@@ -6,30 +7,32 @@ ips = ['10.129.129.2', '10.131.1.2', '10.136.129.2', '10.143.2.2', '10.134.129.2
 
 sites = ['STAR', 'MICH', 'GATECH', 'CERN', 'UCSD', 'PSC', 'HAWI', 'MASS', 'CLEM', 'AMST', 'NCSA', 'FIU', 'PRIN', 'RUTG']
 
-lons = [-88.15754272774885, -83.7101319, -84.3875488, 6.0469869175479545, -117.23932400094392, -79.75279924982625, -157.81639907976145, -72.60787662257826, -82.82128891709674, 4.9558617, -88.24153692109071, -80.37028935316201, -74.61607053887278, -74.4482338]
+# Create a Dataframe with all relevant information
 
-lats = [42.235998882912895, 42.2931086, 33.7753991, 46.2338702, 32.88868022489132, 40.43394339243079, 21.29897615, 42.202493000000004, 34.586543500000005, 52.3545559, 40.09584003877901, 25.754294805404385, 40.34612035, 40.52489]
+locs_df = pd.read_csv('sites.csv')
+sites_df = pd.DataFrame(sites, columns=['site'])
+sites_df = sites_df.merge(locs_df)
+sites_df.insert(0, 'node_name', node_names)
+sites_df.insert(1, 'ip_address', ips)
 
 
+# Create map
 
 fig = go.Figure()
 
 fig.add_trace(go.Scattergeo(
-        #lon = df['lon'],
-        #lat = df['lat'],
-        lon = lons,
-        lat = lats,
-        #text = df['site_name'] + '; ' + df['exp_ip'],
-        text = sites,
+        lon = sites_df['lon'],
+        lat = sites_df['lat'],
+        text = sites_df['site'] + '; ' + sites_df['ip_address'],
         marker=dict(size=8, color="blue")
         ))
 
 fig.add_trace(
     go.Scattergeo(
-        lon = lons,
-        lat = lats,
+        lon = sites_df['lon'],
+        lat = sites_df['lat'],
         mode = 'lines',
-        line = dict(width = 1,color = 'red'),
+        line = dict(width = 2,color = 'red'),
         #hovertext=['1-2'],
         #textposition='top center',
     )
