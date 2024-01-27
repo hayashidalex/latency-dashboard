@@ -59,3 +59,6 @@ MICH,node1,10.131.1.2
 GATECH,node2,10.136.129.2
 CERN,node3,10.143.2.2
 ```
+
+## Interface
+![example](./figs/example.png)
