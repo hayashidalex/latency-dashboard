@@ -27,13 +27,30 @@ Then, connect to `http://127.0.0.1:8050/`
 
 ## Required Files
 
-- `data.csv`: CSV file downloaded from InfluxDB
-- `sites.csv`: FABRIC sites latitudes and longitudes
-- `slice.csv`: Information on the FABRIC slice used for this data collection
+- `./data/sites.csv`: FABRIC sites latitudes and longitudes
+- `./data/slice.csv`: Information on the FABRIC slice used for this data collection
 
-### Format
+
+## Optional File
+
+- `./data/downloaded_data.csv`: CSV file downloaded manually from InfluxDB
+- `influxdb.conf`: if downloading a csv file using API.
+
+
+### influxDB config file format (`influxdb.conf`)
+
 ```
-==> data.csv <==
+[InfluxDB]
+org = RC
+host = https://us-east-1-1.aws.cloud2.influxdata.com
+database = owl-test1
+language = sql
+token = <token string>
+```
+
+### CSV File Format
+```
+==> downloaded_data.csv <==
 #group,false,false,false,false,false,false
 #datatype,long,double,string,string,long,dateTime:RFC3339
 #default,,,,,,

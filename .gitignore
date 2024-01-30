@@ -1,3 +1,6 @@
 .DS_Store
 *.csv
-/venv
+venv/
+data/
+influxdb.conf
+__pycache__/

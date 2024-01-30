@@ -3,6 +3,7 @@ import plotly.graph_objects as go # or plotly.express as px
 import dash_bootstrap_components as dbc
 from dash import Dash, dcc, html, Input, Output, State, callback
 import plotly.express as px 
+import load_data as data_loader
 
 '''
 Requirements
@@ -16,7 +17,8 @@ data.csv: (downloaded from InfluxDB) latency, received, receiver, sender, seq_n,
 ############ Input data ##############
 
 # Create one Dataframe with all the geo-location information
-# TODO This should probably be a separate function or module
+# TODO: use load_data and move this to  after the "Download button" 
+
 
 locs_df = pd.read_csv('sites.csv')
 sites_df = pd.read_csv('slice.csv')
@@ -74,16 +76,16 @@ controls = dbc.Card(
                     'marginLeft': 5, 
                     'marginRight':5}
         ),
-        html.Div(
-            [
-                dbc.Label("Duration (not yet implemented)"),
-                dbc.Input(id="min", type="number", value=10),
-            ],
-            style={'marginBottom': 2, 
-                    'marginTop': 20, 
-                    'marginLeft': 5, 
-                    'marginRight':5}
-        ),
+        #html.Div(
+        #    [
+        #        dbc.Label("Duration (not yet implemented)"),
+        #        dbc.Input(id="min", type="number", value=10),
+        #    ],
+        #    style={'marginBottom': 2, 
+        #            'marginTop': 20, 
+        #            'marginLeft': 5, 
+        #            'marginRight':5}
+        #),
         html.Div(
             [
                 dbc.Button("Submit", id='submit-button-state', n_clicks=0, outline=True, color="primary"),
@@ -101,7 +103,31 @@ app.layout = dbc.Container(
     [
         html.H2("FABRIC Latency Monitor"),
         html.Hr(),
+        dbc.Row([
+            html.Div(
+                [
+                    dbc.Label("Duration"),
+                    dbc.Select(
+                        id="duration",
+                        options=[
+                            {"label": i, "value": i} for i in ['5 min', '30 min', '1 hour']
+                        ],
+                        value="1 min",
+                    ),
+                ],
+            ),
+            html.Div(
+                [
+                    dbc.Button("Download", id='download-button-state', n_clicks=0, outline=True, color="primary"),
+                ], 
+                style={'marginBottom': 25, 
+                        'marginTop': 20, 
+                        'marginLeft': 10}
+            ),
+            ]
+        ),
         dbc.Row(
+                
             [
                 dbc.Col(dcc.Graph(id='map-fig'), lg=8),
                 dbc.Col(controls, lg=4),
