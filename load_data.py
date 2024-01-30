@@ -50,7 +50,7 @@ def load_current_latency_csv(duration='15 minute', file_path='./data/data.csv'):
 
    
     # Convert Unix epoch time to datetime64 type
-    latency_df['received'] = pd.to_datetime(latency_df['received'], unit='s')
+    #latency_df['received'] = pd.to_datetime(latency_df['received'], unit='s')
 
     return latency_df
 
@@ -87,9 +87,6 @@ def _download_influx_data(duration='15 minute', outfile='./data/data.csv'):
     table = client.query(query=query, 
                         database=database, 
                         language=language, mode="all")
-    
-    #print("table:")
-    #print(table)
     
     
     write_options = csv.WriteOptions(include_header=False)
