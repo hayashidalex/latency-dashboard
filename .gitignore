@@ -1,4 +1,5 @@
 .DS_Store
+*influxdb.py
 *.csv
 venv/
 data/
