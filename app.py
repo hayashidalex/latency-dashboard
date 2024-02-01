@@ -174,8 +174,9 @@ def update_figure(n, src, dst, latency_data):
     selected_df = latency_df[latency_df['receiver'].str.contains(dst_ip) & \
                          latency_df['sender'].str.contains(src_ip)]
 
+    title = f'{src} ({src_ip}) --> {dst} ({dst_ip}) \n  Latency (ms) over Time (GMT)'
     line_fig = px.line(selected_df, x="received", y="latency",
-                title=f'{src} ({src_ip}) --> {dst} ({dst_ip}) M = milliseconds')
+                title=title)
 
 
     #####  Map graph ######
