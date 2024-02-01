@@ -74,16 +74,6 @@ controls = dbc.Card(
                     'marginLeft': 5, 
                     'marginRight':5}
         ),
-        #html.Div(
-        #    [
-        #        dbc.Label("Duration (not yet implemented)"),
-        #        dbc.Input(id="min", type="number", value=10),
-        #    ],
-        #    style={'marginBottom': 2, 
-        #            'marginTop': 20, 
-        #            'marginLeft': 5, 
-        #            'marginRight':5}
-        #),
         html.Div(
             [
                 dbc.Button("Submit", id='submit-button-state', n_clicks=0, outline=True, color="primary"),
@@ -109,7 +99,8 @@ app.layout = dbc.Container(
                         id="duration",
                         options=[
                             {"label": i, "value": i} for i in \
-                            ['5 minutes', '30 minutes', '1 hour', '3 hours', '24 hours']
+                            ['5 minutes', '15 minutes', '30 minutes', \
+                            '1 hour', '3 hours', '6 hours', '12 hours']
                         ],
                         value="5 minutes",
                     ),
@@ -229,4 +220,6 @@ def update_figure(n, src, dst, latency_data):
 
 if __name__ == "__main__":
     app.run_server(debug=True, use_reloader=False)  
-    # Turn off reloader if inside Jupyter
+
+    # If running on a remote node    
+    #app.run_server(host='0.0.0.0',debug=False, use_reloader=False)
