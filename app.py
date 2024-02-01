@@ -175,7 +175,7 @@ def update_figure(n, src, dst, latency_data):
                          latency_df['sender'].str.contains(src_ip)]
 
     line_fig = px.line(selected_df, x="received", y="latency",
-                title=f'{src} ({src_ip}) --> {dst} ({dst_ip}) Latency in milliseconds')
+                title=f'{src} ({src_ip}) --> {dst} ({dst_ip}) M = milliseconds')
 
 
     #####  Map graph ######
