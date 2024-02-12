@@ -174,15 +174,21 @@ def update_figure(n, src, dst, latency_data):
     selected_df = latency_df[latency_df['receiver'].str.contains(dst_ip) & \
                          latency_df['sender'].str.contains(src_ip)]
 
-    title = f'{src} ({src_ip}) --> {dst} ({dst_ip}) \n  Latency (ms) over Time (GMT)'
-    line_fig = px.line(selected_df, x="received", y="latency",
-                title=title)
+    title = f'{src} ({src_ip}) --> {dst} ({dst_ip}) \n One-way Latency (GMT)'
+    line_fig = px.line(selected_df, 
+                x="received",
+                y="latency",
+                title=title,
+                labels = {"received": "Probe Packet Arrival Time (GMT)",
+                          "latency": "Latency (M = milliseconds)"}
+                )
 
 
     #####  Map graph ######
     map_fig = go.Figure()
 
     map_fig.add_trace(go.Scattergeo(
+            name = "FABRIC sites",
             lon = sites_df['lon'],
             lat = sites_df['lat'],
             text = sites_df['site'] + '; ' + sites_df['ip_address'],
@@ -199,6 +205,7 @@ def update_figure(n, src, dst, latency_data):
     
     map_fig.add_trace(
         go.Scattergeo(
+            name = "path",
             lon = [src_lon, dst_lon],
             lat = [src_lat, dst_lat],
             mode = 'lines',
