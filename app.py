@@ -5,6 +5,7 @@ import dash_bootstrap_components as dbc
 from dash import Dash, dcc, html, Input, Output, State, callback
 import plotly.express as px 
 import load_data as data_loader
+import graph
 
 '''
 Requirements
@@ -160,13 +161,13 @@ def update_figure(n, src, dst, latency_data):
     '''
     Returns two graph figures
     '''
-
+    '''
     #### Line graph  #####
     src_ip = sites_df.loc[sites_df['site'].str.contains(src), 'ip_address'].item()
     dst_ip = sites_df.loc[sites_df['site'].str.contains(dst), 'ip_address'].item()
 
     #print(f'source {src_ip}, destination {dst_ip}')
-
+    
     latency_df = pd.read_json(latency_data)
     latency_df['received'] = pd.to_datetime(latency_df['received'], unit='s')
 
@@ -182,7 +183,8 @@ def update_figure(n, src, dst, latency_data):
                 labels = {"received": "Probe Packet Arrival Time (GMT)",
                           "latency": "Latency (M = milliseconds)"}
                 )
-
+    '''
+    line_fig = graph.generate_line_graph(src, dst, latency_data)
 
     #####  Map graph ######
     map_fig = go.Figure()
