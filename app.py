@@ -45,7 +45,7 @@ controls = dbc.Card(
     [
         html.Div(
             [
-                dbc.Label("Source Node"),
+                dbc.Label("Node 1"),
                 dbc.Select(
                     id="src-node",
                     options=[
@@ -61,13 +61,31 @@ controls = dbc.Card(
         ),
         html.Div(
             [
-                dbc.Label("Destination Node"),
+                dbc.Label("Node 2"),
                 dbc.Select(
                     id="dst-node",
                     options=[
                         {"label": i, "value": i} for i in sites_df['site'].tolist()
                     ],
                     value="STAR",
+                ),
+            ],
+            style={'marginBottom': 2, 
+                    'marginTop': 20, 
+                    'marginLeft': 5, 
+                    'marginRight':5}
+        ),
+        html.Div(
+            [
+                dbc.Label("Duration"),
+                dbc.Select(
+                    id="duration2",
+                    options=[
+                        {"label": i, "value": i} for i in \
+                        ['5 minutes', '15 minutes', '30 minutes', \
+                         '1 hour', '3 hours', '6 hours', '12 hours']
+                    ],
+                    value="5 minutes",
                 ),
             ],
             style={'marginBottom': 2, 
@@ -126,7 +144,8 @@ app.layout = dbc.Container(
             ],
             align="center",
         ),
-        dbc.Row(dcc.Graph(id='single-latency')),
+        dbc.Row(dcc.Graph(id='single-latency-fwd')),
+        dbc.Row(dcc.Graph(id='single-latency-rev')),
         dcc.Store(id='latency-data')
     ],
     fluid=True,
@@ -151,7 +170,8 @@ def download_data(n, duration):
 
 
 @callback(
-    Output('single-latency', 'figure'),
+    Output('single-latency-fwd', 'figure'),
+    Output('single-latency-rev', 'figure'),
     Output('map-fig', 'figure'),
     Input('submit-button-state', 'n_clicks'),
     State('src-node', 'value'),
@@ -184,7 +204,8 @@ def update_figure(n, src, dst, latency_data):
                           "latency": "Latency (M = milliseconds)"}
                 )
     '''
-    line_fig = graph.generate_line_graph(src, dst, latency_data)
+    line_fig_fwd = graph.generate_line_graph(src, dst, latency_data)
+    line_fig_rev = graph.generate_line_graph(dst, src, latency_data)
 
     #####  Map graph ######
     map_fig = go.Figure()
@@ -224,7 +245,7 @@ def update_figure(n, src, dst, latency_data):
             title = 'FABRIC slice sites',
         )
     
-    return line_fig, map_fig
+    return line_fig_fwd, line_fig_rev, map_fig
 
 
 
