@@ -42,7 +42,7 @@ def load_current_latency_csv(duration='15 minute', file_path='./data/data.csv'):
     Otherwise, download the latest data from InfluxDB
     '''
 
-    _download_influx_data(duration=duration, outfile=file_path)
+    download_influx_data(duration=duration, outfile=file_path)
 
     # Create Dataframe of latency data and add column names
     latency_df = pd.read_csv(file_path, header=0, comment="#",
@@ -55,7 +55,7 @@ def load_current_latency_csv(duration='15 minute', file_path='./data/data.csv'):
     return latency_df
 
 
-def _download_influx_data(duration='15 minute', outfile='./data/data.csv',
+def download_influx_data(duration='15 minute', outfile='./data/data.csv',
                           src_dst=None):
     '''
     duration(str): '1 minute', '5 minutes', '3 hours', '2 days' etc.
@@ -91,7 +91,7 @@ def _download_influx_data(duration='15 minute', outfile='./data/data.csv',
 
         query += path_filter
 
-    print(query)
+    #print(query)
 
     table = client.query(query=query, 
                         database=database, 

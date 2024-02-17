@@ -14,12 +14,15 @@ def generate_line_graph(src, dst, data):
     src_ip = sites_df.loc[sites_df['site'].str.contains(src), 'ip_address'].item()
     dst_ip = sites_df.loc[sites_df['site'].str.contains(dst), 'ip_address'].item()
 
-    latency_df = pd.read_json(data)
-    latency_df['received'] = pd.to_datetime(latency_df['received'], unit='s')
+    #latency_df = pd.read_json(data)
+    #latency_df['received'] = pd.to_datetime(latency_df['received'], unit='s')
 
 
-    selected_df = latency_df[latency_df['receiver'].str.contains(dst_ip) & \
-                         latency_df['sender'].str.contains(src_ip)]
+    selected_df = data[data['receiver'].str.contains(dst_ip) & \
+                        data['sender'].str.contains(src_ip)]
+    
+    selected_df.sort_values(by="received", inplace=True)
+
 
     title = f'{src} ({src_ip}) --> {dst} ({dst_ip}) \n One-way Latency (GMT)'
     line_fig = px.line(selected_df,

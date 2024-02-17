@@ -19,20 +19,8 @@ data.csv: (downloaded from InfluxDB) latency, received, receiver, sender, seq_n,
 ############ Input data ##############
 
 # Create one Dataframe with all the geo-location information
-# TODO: use load_data and move this to  after the "Download button" 
 
 sites_df = data_loader.get_geoloc_df()
-
-
-## Create another Dataframe of latency cada
-#latency_df = pd.read_csv("data.csv", header=0, comment="#")
-#
-## For some reason there is an unwanted column, so delete that
-#latency_df.drop('Unnamed: 0', axis=1, inplace=True)
-#
-## Convert Unix epoch time to datetime64 type
-#latency_df['received'] = pd.to_datetime(latency_df['received'], unit='s')
-
 
 
 ############   Layout  #################
@@ -110,32 +98,6 @@ app.layout = dbc.Container(
     [
         html.H2("FABRIC Latency Monitor"),
         html.Hr(),
-        dbc.Row([
-            html.Div(
-                [
-                    dbc.Label("Duration"),
-                    dbc.Select(
-                        id="duration",
-                        options=[
-                            {"label": i, "value": i} for i in \
-                            ['5 minutes', '15 minutes', '30 minutes', \
-                            '1 hour', '3 hours', '6 hours', '12 hours']
-                        ],
-                        value="5 minutes",
-                    ),
-                    html.Div(id='download-time')
-                ],
-            ),
-            html.Div(
-                [
-                    dbc.Button("Download", id='download-button-state', n_clicks=0, outline=True, color="primary"),
-                ], 
-                style={'marginBottom': 25, 
-                        'marginTop': 20, 
-                        'marginLeft': 10}
-            ),
-            ]
-        ),
         dbc.Row(
                 
             [
@@ -146,27 +108,12 @@ app.layout = dbc.Container(
         ),
         dbc.Row(dcc.Graph(id='single-latency-fwd')),
         dbc.Row(dcc.Graph(id='single-latency-rev')),
-        dcc.Store(id='latency-data')
     ],
     fluid=True,
 )
 
 
 ########## Callbacks #########
-
-@callback(
-    Output('latency-data', 'data'), 
-    Output('download-time', 'children'),
-    Input('download-button-state', 'n_clicks'),
-    State('duration', 'value'), prevent_initial_call=True)
-def download_data(n, duration):
-    
-    df = data_loader.load_current_latency_csv(duration=duration, 
-                                            file_path='./data/data.csv')
-    
-    msg = f'Data downloaded at {datetime.now()}'
-
-    return df.to_json(), msg
 
 
 @callback(
@@ -175,37 +122,24 @@ def download_data(n, duration):
     Output('map-fig', 'figure'),
     Input('submit-button-state', 'n_clicks'),
     State('src-node', 'value'),
-    State('dst-node', 'value'),
-    State('latency-data', 'data'), prevent_initial_call=True)
-def update_figure(n, src, dst, latency_data):
+    State('dst-node', 'value'), 
+    State('duration2', 'value'), prevent_initial_call=True)
+def update_figure(n, src, dst, duration):
     '''
-    Returns two graph figures
-    '''
+    Returns 3  graph figures
     '''
     #### Line graph  #####
     src_ip = sites_df.loc[sites_df['site'].str.contains(src), 'ip_address'].item()
     dst_ip = sites_df.loc[sites_df['site'].str.contains(dst), 'ip_address'].item()
 
-    #print(f'source {src_ip}, destination {dst_ip}')
-    
-    latency_df = pd.read_json(latency_data)
-    latency_df['received'] = pd.to_datetime(latency_df['received'], unit='s')
 
+    latency_fwd = data_loader.download_influx_data(duration=duration, outfile=None,
+            src_dst=(src_ip, dst_ip))
+    line_fig_fwd = graph.generate_line_graph(src, dst, latency_fwd)
 
-    selected_df = latency_df[latency_df['receiver'].str.contains(dst_ip) & \
-                         latency_df['sender'].str.contains(src_ip)]
-
-    title = f'{src} ({src_ip}) --> {dst} ({dst_ip}) \n One-way Latency (GMT)'
-    line_fig = px.line(selected_df, 
-                x="received",
-                y="latency",
-                title=title,
-                labels = {"received": "Probe Packet Arrival Time (GMT)",
-                          "latency": "Latency (M = milliseconds)"}
-                )
-    '''
-    line_fig_fwd = graph.generate_line_graph(src, dst, latency_data)
-    line_fig_rev = graph.generate_line_graph(dst, src, latency_data)
+    latency_rev = data_loader.download_influx_data(duration=duration, outfile=None,
+            src_dst=(dst_ip, src_ip))
+    line_fig_rev = graph.generate_line_graph(dst, src, latency_rev)
 
     #####  Map graph ######
     map_fig = go.Figure()

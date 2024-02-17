@@ -3,7 +3,7 @@ from dash import Dash, html, dash_table
 import pandas as pd
 
 # Incorporate data
-df = pd.read_csv('sample_head1000.csv')
+df = pd.read_csv('../data/sample_head1000.csv')
 
 # Initialize the app
 app = Dash(__name__)
