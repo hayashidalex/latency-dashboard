@@ -1,6 +1,6 @@
-import pandas as pd
 import configparser
-from influxdb_client_3 import InfluxDBClient3, Point
+import pandas as pd
+from influxdb_client_3 import InfluxDBClient3
 import pyarrow as pa
 
 '''
@@ -13,8 +13,8 @@ data.csv: (downloaded from InfluxDB) latency, received, receiver, sender, seq_n,
 '''
 
 def get_geoloc_df(sites_file='./data/sites.csv', slice_file='./data/slice.csv'):
-    all_sites_df = pd.read_csv('./data/sites.csv')
-    slice_df = pd.read_csv('./data/slice.csv')
+    all_sites_df = pd.read_csv(sites_file)
+    slice_df = pd.read_csv(slice_file)
     slice_df = slice_df.merge(all_sites_df)
     
     return slice_df

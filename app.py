@@ -1,9 +1,5 @@
-from datetime import datetime
-import pandas as pd
-import plotly.graph_objects as go # or plotly.express as px
 import dash_bootstrap_components as dbc
 from dash import Dash, dcc, html, Input, Output, State, callback
-import plotly.express as px 
 import load_data as data_loader
 import graph
 
@@ -83,7 +79,8 @@ controls = dbc.Card(
         ),
         html.Div(
             [
-                dbc.Button("Submit", id='submit-button-state', n_clicks=0, outline=True, color="primary"),
+                dbc.Button("Submit", id='submit-button-state', 
+                            n_clicks=0, outline=True, color="primary"),
             ], 
             style={'marginBottom': 25, 
                     'marginTop': 20, 
