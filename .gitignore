@@ -3,6 +3,6 @@
 *.csv
 venv/
 data/
-influxdb.conf
+influxdb.conf*
 __pycache__/
 prior_experiments/test_influxdb_write.py
