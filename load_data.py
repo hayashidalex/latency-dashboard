@@ -55,11 +55,16 @@ def load_current_latency_csv(duration='15 minute', file_path='./data/data.csv'):
     return latency_df
 
 
-def download_influx_data(duration='15 minute', outfile='./data/data.csv',
+def download_influx_data(duration='15 minute', outfile=None,
                           src_dst=None):
     '''
-    duration(str): '1 minute', '5 minutes', '3 hours', '2 days' etc.
-    src_dst(tuple): (<str>, <str>) example: ("10.0.0.1", "10.0.1.1")
+    Input:
+        duration(str): '1 minute', '5 minutes', '3 hours', '2 days' etc.
+        outfile(str): None or 'path/to/out.csv'
+        src_dst(tuple): (<str>, <str>) example: ("10.0.0.1", "10.0.1.1")
+
+    Output:
+        Dataframe: (['latency', 'received', 'receiver', 'sender', 'seq_n', 'time'])
     '''
 
     # Read InfluxDB conf
@@ -91,7 +96,7 @@ def download_influx_data(duration='15 minute', outfile='./data/data.csv',
 
         query += path_filter
 
-    #print(query)
+    print(query)
 
     table = client.query(query=query, 
                         database=database, 
